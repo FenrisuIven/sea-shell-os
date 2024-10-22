@@ -10,7 +10,7 @@ if %errorlevel% neq 0 (
 )
 
 :: Check if os_build exists and whether one should be created or started
-docker container inspect os_build >NUL 2>NUL
+docker container inspect fenvis/ocs-docker >NUL 2>NUL
 if %errorlevel% neq 0 (
   echo Haven't found container named os_build
   echo Creating a new container from image yevhenii0/os_build:0.0.1. Dir %CD% will be mounted to /src

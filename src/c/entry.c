@@ -2,6 +2,12 @@
 #include "drivers/keyboard/keyboard.h"
 #include "drivers/timer/timer.h"
 #include "drivers/serial_port/serial_port.h"
+#include "drivers/vga/vga.h"
+#include "drivers/bash/bash.h"
+
+_Noreturn void halt_loop() {
+    while (1) { halt(); }
+}
 
 void exception_handler(u32 interrupt, u32 error, char *message) {
     serial_log(LOG_ERROR, message);
@@ -19,55 +25,16 @@ void init_kernel() {
     enable_interrupts();
 }
 
-/**
- * Puts cursors in a given position. For example, position = 20 would place it in
- * the first line 20th column, position = 80 will place in the first column of the second line.
- */
-void put_cursor(unsigned short pos) {
-    out(0x3D4, 14);
-    out(0x3D5, ((pos >> 8) & 0x00FF));
-    out(0x3D4, 15);
-    out(0x3D5, pos & 0x00FF);
-}
+void timer_tick_handler() {}
 
-/**
- * In order to avoid execution of arbitrary instructions by CPU we halt it.
- * Halt "pauses" CPU and puts it in low power mode until next interrupt occurs.
- */
-_Noreturn void halt_loop() {
-    while (1) { halt(); }
-}
-
-void key_handler(struct keyboard_event event) {
-    if (event.key_character && event.type == EVENT_KEY_PRESSED) {
-        // process key press event
-    }
-}
-
-void timer_tick_handler() {
-    // do something when timer ticks
-}
-
-/**
- * This is where the bootloader transfers control to.
- */
 void kernel_entry() {
     init_kernel();
-    keyboard_set_handler(key_handler);
     timer_set_handler(timer_tick_handler);
 
-    // demo of printing hello world to screen using framebuffer
-    char *message = "Hello world!";
-    char *framebuffer = (char *) 0xb8000;
-
-    while (*message != '\0') {
-        *framebuffer = *message;
-        *(framebuffer + 1) = (0xd << 4) | 0xb;
-        framebuffer += 2;
-        message++;
-    }
-
-    put_cursor(12);
+    bash_entry();
+    framebuffer = (char*)FB_START;
+    clear_frame(true);
+    clear_input_buffer();
 
     halt_loop();
 }

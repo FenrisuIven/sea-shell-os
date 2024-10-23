@@ -5,32 +5,21 @@
 
 bool acceptingFileContents = false;
 
-void key_Enter_Action() {
+void key_Enter_Action(void handler()) {
     start_next_line();
-    handle_command();
-    if (acceptingFileContents) {
-        char_counter = 0;
-        update_pointer_position(0);
-        return;
-    }
-    if (char_counter != 3 && line_counter != 1) out_message_cmd_start();
+    handler();
 }
 
-void key_Backspace_Action() {
-    if (char_counter < 4 && !acceptingFileContents) return;
+void key_Backspace_Action(void handler()) {
+    if (char_counter < 4) return;
     current_address -= 2;
     char_counter--;
     update_framebuffer_pointer();
     out_char((struct FramebufferChar){'\0', DEF_BG, DEF_FG, '\0'});
     update_pointer_position(0);
-    rem_last_elem();
+    handler();
 }
 
-void key_Escape_Action() {
-    if (acceptingFileContents) {
-        char_counter = 0;
-        update_pointer_position(0);
-        acceptingFileContents = false;
-        out_message_cmd_start();
-    }
+void key_Escape_Action(void action()) {
+    action();
 }

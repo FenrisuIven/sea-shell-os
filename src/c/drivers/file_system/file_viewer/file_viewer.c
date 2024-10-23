@@ -9,6 +9,7 @@
 #include "../../../kernel/kernel.h"
 
 struct File* current_file;
+int file_index;
 bool file_is_set = false;
 
 int local_input_line = 0;
@@ -24,11 +25,12 @@ void new_line_in_buffer() {
 
 void init_content_input_handler() {
     current_file = get_file_at(0);
+    file_index = 0;
 }
 
 int add_file_content(char * args) {
     if(local_input_line != 0) concat_strings(args, "\n");
-    concat_strings(current_file->content, args);
+    set_content_for(file_index, args);
     return 0;
 }
 
@@ -38,6 +40,7 @@ int execute_accept_file_input(char* args) {
         int target_index = get_index_by_name(args);
         if (target_index == -1) return 1;
 
+        file_index = target_index;
         struct File* target = get_file_at(target_index);
         // out_message((struct Message){target->name, ERR_BG, ERR_FG, true});
         current_file = target;

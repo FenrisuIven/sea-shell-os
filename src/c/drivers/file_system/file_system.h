@@ -16,6 +16,7 @@ struct FileSystem {
 
 extern void init_file_system();
 extern int create_file(char * name, char * content);
+extern void set_content_for(int index, char* content);
 extern char * get_file_name_at(int index);
 extern int get_index_by_name(char* name);
 extern struct File* get_file_at(int index);

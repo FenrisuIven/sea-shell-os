@@ -32,6 +32,13 @@ int create_file(char * name, char * contents) {
     return 0;
 }
 
+void set_content_for(int index, char* content) {
+    trim_to_len(content, MAX_CHAR_COUNT);
+    copy_string(local_system.files[index].content, content);
+    out_message((struct Message){local_system.files[index].content, RED, BLACK, true});
+    out_message((struct Message){local_system.files[index].name, RED, BLACK, true});
+}
+
 char* get_file_name_at(int index) {
     return local_system.files[index].name;
 }

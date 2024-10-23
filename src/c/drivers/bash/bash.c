@@ -1,5 +1,7 @@
 #include "bash.h"
 
+#include "../timer/system_timer_handler.h"
+#include "../timer/timer.h"
 #include "../keyboard/keyboard.h"
 #include "../keyboard/key_actions_handlers.h"
 #include "../../kernel/kernel.h"
@@ -139,10 +141,12 @@ void bash_key_handler(struct keyboard_event event) {
         if (char_counter == 80) {
             start_next_line(true);
         }
+        reset_system_ticks();
     }
 }
 
 void init_bash() {
+    timer_set_handler(system_time_handler);
     keyboard_set_handler(bash_key_handler);
     framebuffer = (char*)FB_START;
     clear_frame(true);

@@ -1,9 +1,12 @@
+#include "drivers/timer/system_timer_handler.h"
+#include "drivers/base_utils/base_utils.h"
 #include "kernel/kernel.h"
 #include "drivers/keyboard/keyboard.h"
 #include "drivers/timer/timer.h"
 #include "drivers/serial_port/serial_port.h"
 #include "drivers/vga/vga.h"
 #include "drivers/bash/bash.h"
+#include "drivers/vga/screensaver/screensaver.h"
 
 _Noreturn void halt_loop() {
     while (1) { halt(); }
@@ -25,11 +28,9 @@ void init_kernel() {
     enable_interrupts();
 }
 
-void timer_tick_handler() {}
-
 void kernel_entry() {
     init_kernel();
-    timer_set_handler(timer_tick_handler);
+    timer_set_handler(system_time_handler);
 
     init_bash();
 

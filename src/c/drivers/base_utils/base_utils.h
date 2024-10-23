@@ -2,6 +2,7 @@
 #define BASE_UTILS_H
 #include "../../kernel/kernel.h"
 
+extern void void_func();
 extern bool compare_strings(char* str1, char* str2);
 extern void copy_string(char* str1, char* str2);
 extern void concat_strings(char* str1, char* str2);

@@ -1,5 +1,6 @@
 #include "screensaver.h"
 
+#include "../../bash/bash.h"
 #include "../../keyboard/keyboard.h"
 #include "../../timer/timer.h"
 #include "../../base_utils/base_utils.h"
@@ -50,7 +51,7 @@ struct Char_To_Display init_char() {
     if(col_idx == 80) col_idx = 0;
 
     int move_offset = custom_rand(10);
-    if (move_offset == 0) move_offset = 3;
+    if (move_offset < 3) move_offset == 0 ? move_offset = 3 : move_offset == 1 ? move_offset == 5 : move_offset;
     return (struct Char_To_Display) {
         .character = get_char_by_col(col_idx),
         .bg = BLACK,
@@ -64,10 +65,15 @@ struct Char_To_Display init_char() {
 }
 
 void init_array_of_chars() {
-    for (int i = 0; i != MAX_CHARS / 5; i++) {
-        change_seed(i);
-        screensaver_chars[i] = init_char();
+    int count = 0;
+    count_present_chars = 0;
+    for (count = 0; count != MAX_CHARS / 5; count++) {
+        change_seed(count);
+        screensaver_chars[count] = init_char();
         count_present_chars++;
+    }
+    for (; count != MAX_CHARS; count++) {
+        screensaver_chars[count] = (struct Char_To_Display) { .movable = false };
     }
 }
 
@@ -88,10 +94,6 @@ void display_chars() {
 
 int calc_fb_index(int row_idx, int col_idx) {
     return (FB_WIDTH * row_idx + col_idx) * 2;
-}
-
-void void_func() {
-
 }
 
 bool scrolling = false;
@@ -183,7 +185,10 @@ void screensaver_timer_handler() {
 }
 
 void screensaver_key_handler(struct keyboard_event event) {
-
+    if (event.key && event.type == EVENT_KEY_PRESSED) {
+        timer_set_handler(void_func);
+        init_bash();
+    }
 }
 
 void init_screensaver() {

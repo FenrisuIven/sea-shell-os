@@ -19,7 +19,8 @@ SRC_C   := \
 	src/c/drivers/keyboard/key_actions_handlers.c \
 	src/c/drivers/file_system/file_viewer/file_viewer.c \
 	src/c/drivers/vga/screensaver/screensaver.c \
-	src/c/drivers/base_utils/random.c
+	src/c/drivers/base_utils/random.c \
+	src/c/drivers/timer/system_timer_handler.c
 
 OBJ_ASM := $(patsubst src/asm/%.asm, build/asm/%.o, $(SRC_ASM))
 OBJ_C   := $(patsubst %.c, build/kernel/%.o, $(SRC_C))

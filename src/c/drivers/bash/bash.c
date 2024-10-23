@@ -4,7 +4,7 @@
 #include "../keyboard/key_actions_handlers.h"
 #include "../../kernel/kernel.h"
 #include "../../drivers/base_utils/base_utils.h"
-#include "../file_system/file_contents_input.h"
+#include "../file_system/file_viewer/file_viewer.h"
 #include "../../drivers/vga/vga.h"
 #include "../file_system/file_system.h"
 #include "./command_handlers/command_handlers.h"
@@ -14,13 +14,14 @@ char input_buffer[MAX_INPUT_SIZE];
 int buffer_idx = 0;
 
 struct Command COMMANDS[COMMANDS_COUNT] = {
-    {"help", "| help: List of all commands present"},
-    {"clear", "| clear: Clears the screen"},
-    {"hello", "| Wouldn't you want to say hi to your pc?"},
-    {"mk", "| mk <name>: Create new file"},
-    {"w", "| w <name>: Write in file"},
+    {"help", "| help: list of all commands present"},
+    {"clear", "| clear: clears the screen"},
+    {"hello", "| wouldn't you want to say hi to your pc?"},
+    {"mk", "| mk <name>: create new file"},
+    {"write", "| w <name>: write in file"},
     {"read", "| read <name>: read a file"},
     {"dir", "| dir: displays all currently created files"},
+    {"rem", "| rem <name>: delete file"},
     {"term", "| term : terminates any ongoing input"}
 };
 
@@ -42,7 +43,7 @@ void clear_input_buffer() {
 
 int get_command_idx(char *cmd) {
     for (int i = 0; i != COMMANDS_COUNT * 1; i++) {
-        if (compareStrings(cmd, COMMANDS[i].name)) {
+        if (compare_strings(cmd, COMMANDS[i].name)) {
             return i;
         }
     }
@@ -69,10 +70,13 @@ void execute_command (char *cmd, char *args) {
                 DEF_BG, DEF_FG, true,
             });
             break;
-        case 4: //w
-            if(!acceptingFileContents) clear_frame(false);
-            acceptingFileContents = true;
-            execute_accept_file_input(args);
+        case 4: //write
+            if (init_viewer(args) == 1) {
+                out_message((struct Message){
+                    "Error: Could not read file",
+                    ERR_BG, ERR_FG, true,
+                });
+            }
             break;
         case 5: // read
             execute_read(args);
@@ -87,31 +91,17 @@ void handle_command() {
     char args[MAX_INPUT_SIZE] = {};
     int i = 0, cmdIdx = 0, argsIdx = 0;
 
-    if (!acceptingFileContents) {
-        while (input_buffer[i] != ' ' && input_buffer[i] != '\0') {
-            command[cmdIdx++] = input_buffer[i++];
-        }
-        command[cmdIdx] = '\0';
-        i++;
+    while (input_buffer[i] != ' ' && input_buffer[i] != '\0') {
+        command[cmdIdx++] = input_buffer[i++];
     }
+    command[cmdIdx] = '\0';
+    i++;
 
-    bool accept_with_spaces = compareStrings("mk", command) && !acceptingFileContents;
     while (input_buffer[i] != '\0') {
-        if(!accept_with_spaces && input_buffer[i] == ' ') break;
         args[argsIdx++] = input_buffer[i++];
     }
     args[argsIdx] = '\0';
 
-    if (acceptingFileContents) {
-        if (!compareStrings(args, "term")) {
-            execute_command("w", args);
-        }
-        else {
-            execute_command("term", args);
-        }
-        clear_input_buffer();
-        return;
-    }
     execute_command(command, args);
     clear_input_buffer();
 }

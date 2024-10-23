@@ -2,7 +2,6 @@
 #include "../../kernel/kernel.h"
 #include "../vga/vga.h"
 #include "../bash/bash.h"
-#include "../file_system/file_contents_input.h"
 
 bool acceptingFileContents = false;
 

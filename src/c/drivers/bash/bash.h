@@ -1,7 +1,7 @@
 #ifndef CMD_H
 #define CMD_H
 
-#define COMMANDS_COUNT 8
+#define COMMANDS_COUNT 9
 #define COMMANDS_SYSTEM_RESERVED 1
 #define MAX_INPUT_SIZE 60
 

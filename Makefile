@@ -17,7 +17,6 @@ SRC_C   := \
 	src/c/drivers/bash/command_handlers/command_handlers.c \
 	src/c/drivers/file_system/file_system.c \
 	src/c/drivers/keyboard/key_actions_handlers.c \
-	src/c/drivers/file_system/file_contents_input.c \
 	src/c/drivers/file_system/file_viewer/file_viewer.c \
 	src/c/drivers/vga/screensaver/screensaver.c \
 	src/c/drivers/base_utils/random.c

@@ -76,3 +76,13 @@ void execute_read(char* name) {
         true
     });
 }
+
+void execute_remove_file(char* name) {
+    trim_to_len(name, MAX_FILE_NAME);
+    int target_index = get_index_by_name(name);
+    if (target_index == -1) {
+        out_message((struct Message) {"Error: File was not found",ERR_BG,ERR_FG,true});
+        return;
+    }
+    delete_file(name);
+}

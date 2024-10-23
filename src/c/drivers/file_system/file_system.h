@@ -19,5 +19,6 @@ extern int create_file(char * name, char * content);
 extern char * get_file_name_at(int index);
 extern int get_index_by_name(char* name);
 extern struct File* get_file_at(int index);
+extern void delete_file(char* name);
 
 #endif //FILESYSTEM_H

@@ -27,10 +27,8 @@ void init_content_input_handler() {
 }
 
 int add_file_content(char * args) {
-    out_message((struct Message){args, RED, BLACK, true});
     if(local_input_line != 0) concat_strings(args, "\n");
     concat_strings(current_file->content, args);
-    out_message((struct Message){current_file->content, RED, BLACK, true});
     return 0;
 }
 

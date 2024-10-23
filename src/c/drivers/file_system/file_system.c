@@ -2,6 +2,7 @@
 
 #include "../base_utils/base_utils.h"
 #include "../vga/vga.h"
+#include "../bash/command_handlers/command_handlers.h"
 
 struct FileSystem local_system;
 int current_file_count;
@@ -39,8 +40,6 @@ int get_index_by_name(char* name) {
     int index = 0;
     bool found = false;
     while(index < MAX_FILES * 1) {
-        out_message((struct Message){local_system.files[index].name, RED, BLACK, true});
-
         if (compare_strings(name, local_system.files[index].name)) {
             found = true;
             break;
@@ -64,4 +63,5 @@ void delete_file(char* name) {
         .content = ""
     };
     current_file_count--;
+    execute_dir();
 }

@@ -82,7 +82,8 @@ int execute_command (char *cmd, char *args) {
             execute_read(args);
             break;
         case 6: execute_dir(); break;
-        case 7: acceptingFileContents = false; break;
+        case 7: execute_remove_file(args); break;
+        case 8: acceptingFileContents = false; break;
     }
     return 0;
 }

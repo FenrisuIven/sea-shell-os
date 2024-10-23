@@ -76,14 +76,16 @@ void out_tabulation() {
         out_char((struct FramebufferChar){' ', DEF_BG, DEF_FG, '\0'});
     }
 }
-
-void print_shell_version() {
-    out_message((struct Message) { "Sea-Shell v0.0.1", SHELL_BG, SHELL_FG, false});
+void print_top_bar(char* message) {
+    out_message((struct Message) { message, SHELL_BG, SHELL_FG, false});
     char* fb_pointer = (char*)FB_START;
-    for(int i = 32; i < FB_WIDTH*2; i+=2) {
-        fb_pointer[i + 1] = SHELL_BG << 4;
+    for(int i = 0; i < FB_WIDTH * 2; i+=2) {
+        fb_pointer[i + 1] = SHELL_BG << 4 | SHELL_FG;
     }
     start_next_line();
+}
+void print_shell_version() {
+    print_top_bar("Sea-Shell v0.0.1");
     out_message_cmd_start();
 }
 

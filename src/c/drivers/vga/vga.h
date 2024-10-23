@@ -60,6 +60,7 @@ extern void out_char (struct FramebufferChar);
 extern void out_message (struct Message config);
 extern void out_message_command (int cmdIdx, struct Message config);
 extern void out_message_cmd_start();
+extern void print_top_bar(char* message);
 extern void clear_frame(bool print_shell_ver);
 extern void start_next_line();
 extern void scroll_needed();

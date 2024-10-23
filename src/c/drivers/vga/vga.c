@@ -197,3 +197,10 @@ void paint_frame(enum COLORS color) {
         fb_pointer[i + 1] = color;
     }
 }
+
+void init_framebuffer() {
+    line_counter = 0;
+    char_counter = 0;
+    current_address = FB_START;
+    update_framebuffer_pointer();
+}

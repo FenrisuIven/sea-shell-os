@@ -15,8 +15,8 @@ extern void clear_input_buffer();
 extern void set_buffer_elem(char value);
 extern void rem_last_elem();
 
-extern void handle_command();
+extern int handle_command();
 
-extern void bash_entry();
+extern void init_bash();
 
 #endif //CMD_H

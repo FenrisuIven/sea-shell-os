@@ -50,7 +50,7 @@ int get_command_idx(char *cmd) {
     return -1;
 }
 
-void execute_command (char *cmd, char *args) {
+int execute_command (char *cmd, char *args) {
     switch (get_command_idx(cmd)) {
         default: execute_not_found(); break;
 
@@ -77,16 +77,17 @@ void execute_command (char *cmd, char *args) {
                     ERR_BG, ERR_FG, true,
                 });
             }
-            break;
+            return 4;
         case 5: // read
             execute_read(args);
             break;
         case 6: execute_dir(); break;
         case 7: acceptingFileContents = false; break;
     }
+    return 0;
 }
 
-void handle_command() {
+int handle_command() {
     char command[MAX_INPUT_SIZE] = {};
     char args[MAX_INPUT_SIZE] = {};
     int i = 0, cmdIdx = 0, argsIdx = 0;
@@ -102,21 +103,29 @@ void handle_command() {
     }
     args[argsIdx] = '\0';
 
-    execute_command(command, args);
+    int res = execute_command(command, args);
     clear_input_buffer();
+    return res;
+}
+void enter_action_handler() {
+    bool print_cmd_start = char_counter != 3 && line_counter != 1;
+    if(handle_command() == 4) print_cmd_start = false;
+    char_counter = 0;
+    update_pointer_position(0);
+    if (print_cmd_start) out_message_cmd_start();
+}
+void backspace_action_handler() {
+    rem_last_elem();
 }
 
 void bash_key_handler(struct keyboard_event event) {
     if (event.key && event.type == EVENT_KEY_PRESSED) {
         switch(event.key) {
-            case KEY_ESC:
-                key_Escape_Action();
-                return;
             case KEY_ENTER:
-                key_Enter_Action();
+                key_Enter_Action(enter_action_handler);
                 return;
             case KEY_BACKSPACE:
-                key_Backspace_Action();
+                key_Backspace_Action(backspace_action_handler);
                 return;
             case KEY_LEFT_ALT:
                 init_screensaver();
@@ -132,6 +141,9 @@ void bash_key_handler(struct keyboard_event event) {
     }
 }
 
-void bash_entry() {
+void init_bash() {
     keyboard_set_handler(bash_key_handler);
+    framebuffer = (char*)FB_START;
+    clear_frame(true);
+    clear_input_buffer();
 }

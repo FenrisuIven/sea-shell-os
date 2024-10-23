@@ -31,10 +31,7 @@ void kernel_entry() {
     init_kernel();
     timer_set_handler(timer_tick_handler);
 
-    bash_entry();
-    framebuffer = (char*)FB_START;
-    clear_frame(true);
-    clear_input_buffer();
+    init_bash();
 
     halt_loop();
 }

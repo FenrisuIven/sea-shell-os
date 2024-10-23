@@ -37,11 +37,17 @@ char* get_file_name_at(int index) {
 
 int get_index_by_name(char* name) {
     int index = 0;
+    bool found = false;
     while(index < MAX_FILES * 1) {
-        if (compare_strings(name, local_system.files[index].name)) break;
+        out_message((struct Message){local_system.files[index].name, RED, BLACK, true});
+
+        if (compare_strings(name, local_system.files[index].name)) {
+            found = true;
+            break;
+        }
         index++;
     }
-    return index;
+    return found ? index : - 1;
 }
 
 struct File* get_file_at(int index) {

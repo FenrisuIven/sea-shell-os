@@ -62,18 +62,15 @@ void execute_dir() {
 }
 
 void execute_read(char* name) {
-    struct File* target = get_file_at(get_index_by_name(name));
-    if (!compare_strings(target->name, name)) {
-        out_message((struct Message) {
-            .message = "Error: File was not found",
-            ERR_BG,
-            ERR_FG,
-            true
-        });
+    trim_to_len(name, MAX_FILE_NAME);
+    int target_index = get_index_by_name(name);
+    if (target_index == -1) {
+        out_message((struct Message) {"Error: File was not found",ERR_BG,ERR_FG,true});
         return;
     }
+    struct File* target = get_file_at(target_index);
     out_message((struct Message) {
-        .message = target->content,
+        target->content,
         DEF_BG,
         SYSTEM_FG,
         true

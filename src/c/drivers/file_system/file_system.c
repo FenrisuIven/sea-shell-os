@@ -4,50 +4,42 @@
 #include "../vga/vga.h"
 #include "../bash/command_handlers/command_handlers.h"
 
-struct FileSystem local_system;
+struct File local_system[MAX_FILES];
 int current_file_count;
 
 void init_file_system() {
     current_file_count = 0;
     for (int i = 0; i < MAX_FILES; i++) {
-        local_system.files[i] = (struct File){
-            .name = "",
-            .content = ""
-        };
+        local_system[i] = (struct File) {};
+        copy_string(local_system[i].name, "");
+        copy_string(local_system[i].content, "");
     }
 }
 
-int create_file(char * name, char * contents) {
-    struct File newFile =  (struct File) {
-        .name = {},
-        .content = {}
-    };
-    char* prevState = "                    "; // ugly
+void set_content_for(int index, char* content) {
+    trim_to_len(content, MAX_CHAR_COUNT - 1);
+    copy_string(local_system[index].content, content);
+}
 
-    copy_string(newFile.name, name);
-    copy_string(newFile.content, contents);
-    if (compare_strings(newFile.name, prevState)) return 1;
+int create_file(char* name) {
+    local_system[current_file_count] = (struct File) {};
 
-    local_system.files[current_file_count++] = newFile;
+    trim_to_len(name, MAX_FILE_NAME - 1);
+    copy_string(local_system[current_file_count++].name, name);
+
     return 0;
 }
 
-void set_content_for(int index, char* content) {
-    trim_to_len(content, MAX_CHAR_COUNT);
-    copy_string(local_system.files[index].content, content);
-    out_message((struct Message){local_system.files[index].content, RED, BLACK, true});
-    out_message((struct Message){local_system.files[index].name, RED, BLACK, true});
-}
-
 char* get_file_name_at(int index) {
-    return local_system.files[index].name;
+    return local_system[index].name;
 }
 
 int get_index_by_name(char* name) {
+    trim_to_len(name, MAX_FILE_NAME - 1);
     int index = 0;
     bool found = false;
     while(index < MAX_FILES * 1) {
-        if (compare_strings(name, local_system.files[index].name)) {
+        if (compare_strings(name, local_system[index].name)) {
             found = true;
             break;
         }
@@ -57,15 +49,15 @@ int get_index_by_name(char* name) {
 }
 
 struct File* get_file_at(int index) {
-    return &local_system.files[index];
+    return &local_system[index];
 }
 
 void delete_file(char* name) {
     int target_index = get_index_by_name(name);
     for (int i = target_index; i != MAX_FILES - 1; i++) {
-        local_system.files[i] = local_system.files[i + 1];
+        local_system[i] = local_system[i + 1];
     }
-    local_system.files[MAX_FILES - 1] = (struct File){
+    local_system[MAX_FILES - 1] = (struct File){
         .name = "",
         .content = ""
     };

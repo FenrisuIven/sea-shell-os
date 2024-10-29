@@ -24,6 +24,7 @@ void new_line_in_buffer() {
 }
 
 void init_content_input_handler() {
+    file_is_set = false;
     current_file = get_file_at(0);
     file_index = 0;
 }
@@ -42,9 +43,7 @@ int execute_accept_file_input(char* args) {
 
         file_index = target_index;
         struct File* target = get_file_at(target_index);
-        // out_message((struct Message){target->name, ERR_BG, ERR_FG, true});
         current_file = target;
-        // out_message((struct Message){current_file->name, ERR_BG, ERR_FG, true});
         file_is_set = true;
         return 0;
     }

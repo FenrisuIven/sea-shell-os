@@ -103,7 +103,6 @@ void scroll_screensaver() {
     char* framebuffer_pointer = (char*)FB_START;
     for(int i = 24; i != 0; i--) {
         for (int j = 79; j != -1; j--) {
-
             framebuffer_pointer[calc_fb_index(i, j)] = framebuffer_pointer[calc_fb_index(i - 1, j)];
             framebuffer_pointer[calc_fb_index(i,j) + 1] = framebuffer_pointer[calc_fb_index(i - 1, j) + 1];
         }
@@ -136,7 +135,7 @@ bool check_if_line_clear(int row_idx) {
         char fb_char = temp_framebuffer_pointer[calc_fb_index(row_idx, i)];
         if (fb_char != '\0' && fb_char != ' ') count_elems++;
     }
-    if (count_elems == 80) {
+    if (count_elems > 70) {
         return false;
     }
     return true;
@@ -159,14 +158,11 @@ void screensaver_timer_handler() {
                 draw_char(curr);
                 set_not_movable(i);
 
-                if (last_line_counter == 80 ) {
-                    if (!check_if_line_clear(24)) {
-                        line_counter = 0;
-                        scroll_screensaver();
-                    }
+                while (!check_if_line_clear(24)) {
+                    scroll_screensaver();
+                    line_counter = 0;
+                    last_line_counter = 0;
                 }
-
-                if (check_for_null_bellow(curr->row_index, curr->col_index) && curr->row_index < 10) scroll_screensaver();
 
                 continue;
             }
@@ -178,8 +174,6 @@ void screensaver_timer_handler() {
             screensaver_chars[count_present_chars++] = init_char();
         }
         curr->current_tick++;
-
-
     }
     local_ticks++;
 }

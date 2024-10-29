@@ -7,7 +7,7 @@
 
 int system_ticks = 0;
 void system_time_handler() {
-    if (system_ticks == 100) {
+    if (system_ticks == 10 * 20) {
         system_ticks = 0;
         timer_set_handler(void_func);
         init_screensaver();

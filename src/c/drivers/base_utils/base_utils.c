@@ -14,11 +14,12 @@ bool compare_strings(char* str1, char* str2) {
     return str1[i] == '\0' && str2[i] == '\0';
 }
 
-void copy_string(char * str1, char * str2) {
-    while (*str2 != '\0') {
-        *str1++ = *str2++;
+void copy_string(char* str1, char* str2) {
+    int i = 0;
+    for ( ; str2[i] != '\0'; i++) {
+        str1[i] = str2[i];
     }
-    *str1 = '\0';
+    str1[i] = '\0';
 }
 
 void concat_strings(char* str1, char* str2) {
@@ -36,7 +37,10 @@ void trim_to_len(char* str, int len) {
 
 int str_len(char* str) {
     int len = 0;
-    while (str[len] != '\0') len++;
+    while (*str != '\0') {
+        str++;
+        len++;
+    }
     return len;
 }
 

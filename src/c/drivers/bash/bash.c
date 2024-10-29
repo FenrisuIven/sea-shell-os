@@ -60,7 +60,7 @@ int execute_command (char *cmd, char *args) {
         case 1: execute_clear(); break;
         case 2: execute_hello(); break;
         case 3: //mk
-            if(create_file(args, "") == 1) {
+            if(create_file(args) == 1) {
                 out_message((struct Message){
                     "Error: Could not create file",
                     ERR_BG, ERR_FG, true,
@@ -78,6 +78,7 @@ int execute_command (char *cmd, char *args) {
                     "Error: Could not read file",
                     ERR_BG, ERR_FG, true,
                 });
+                return 0;
             }
             return 4;
         case 5: // read
@@ -101,10 +102,18 @@ int handle_command() {
     command[cmdIdx] = '\0';
     i++;
 
+    bool first_space = false;
     while (input_buffer[i] != '\0') {
+        if (input_buffer[i] == ' ') {
+            if (first_space) break;
+            first_space = true;
+        }
+        else {
+            first_space = false;
+        }
         args[argsIdx++] = input_buffer[i++];
     }
-    args[argsIdx] = '\0';
+    args[--argsIdx] = '\0';
 
     int res = execute_command(command, args);
     clear_input_buffer();
@@ -131,7 +140,7 @@ void bash_key_handler(struct keyboard_event event) {
                 key_Backspace_Action(backspace_action_handler);
                 return;
             case KEY_LEFT_ALT:
-                init_screensaver();
+                //init_screensaver();
                 return;
         }
 
@@ -145,7 +154,12 @@ void bash_key_handler(struct keyboard_event event) {
     }
 }
 
+bool file_system_init = false;
 void init_bash() {
+    if (!file_system_init) {
+        init_file_system();
+        file_system_init = true;
+    }
     timer_set_handler(system_time_handler);
     keyboard_set_handler(bash_key_handler);
     framebuffer = (char*)FB_START;

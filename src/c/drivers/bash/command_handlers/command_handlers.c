@@ -50,7 +50,7 @@ void execute_dir() {
     out_message((struct Message){"| root:", DEF_BG, SYSTEM_FG, true});
     int i = 0;
     while (i != MAX_FILES * 1 && !compare_strings("", get_file_name_at(i))) {
-        char message[MAX_FILE_NAME + 6] = "-- | ";
+        char message[MAX_FILE_NAME + 5] = "-- | ";
         concat_strings(message, get_file_name_at(i++));
         out_message((struct Message) {
             message,

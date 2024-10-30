@@ -12,6 +12,7 @@ SRC_C   := \
 	src/c/drivers/timer/timer.c \
 	src/c/drivers/serial_port/serial_port.c \
 	src/c/drivers/base_utils/base_utils.c \
+	src/c/drivers/base_utils/int_to_char.c \
 	src/c/drivers/vga/vga.c \
 	src/c/drivers/bash/bash.c \
 	src/c/drivers/bash/command_handlers/command_handlers.c \

@@ -12,25 +12,25 @@ struct File* current_file;
 int file_index;
 bool file_is_set = false;
 
-int local_input_line = 0;
-int local_input_char = 0;
-char local_input_buffer[FB_WIDTH][FB_HEIGHT];
-
-void char_to_current_line(char character) {
-    local_input_buffer[local_input_line][local_input_char++] = character;
-}
-void new_line_in_buffer() {
-    local_input_line++;
-}
+int input_buffer_index = 0;
+char local_input_buffer[FB_WIDTH * FB_HEIGHT];
 
 void init_content_input_handler() {
     file_is_set = false;
     current_file = get_file_at(0);
     file_index = 0;
+    input_buffer_index = 0;
+    local_input_buffer[0] = '\0';
+}
+
+void char_to_current_line(char character) {
+    local_input_buffer[input_buffer_index++] = character;
+}
+void new_line_in_buffer() {
+    char_to_current_line('\n');
 }
 
 int add_file_content(char * args) {
-    if(local_input_line != 0) concat_strings(args, "\n");
     set_content_for(file_index, args);
     return 0;
 }
@@ -62,18 +62,15 @@ void viewer_key_handler(struct keyboard_event event) {
         switch(event.key) {
             case KEY_ESC:
                 key_Escape_Action(init_bash);
+                execute_accept_file_input(local_input_buffer);
             return;
             case KEY_ENTER:
-                execute_accept_file_input(local_input_buffer[0]);
+                new_line_in_buffer();
+                start_next_line();
             return;
         }
         out_char((struct FramebufferChar){event.key_character, DEF_BG, DEF_FG, '\0'});
         char_to_current_line(event.key_character);
-
-        if (local_input_char == 80) {
-            start_next_line(true);
-            new_line_in_buffer();
-        }
     }
 }
 

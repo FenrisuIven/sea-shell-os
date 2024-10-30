@@ -1,5 +1,6 @@
 #include "file_viewer.h"
 
+#include "../../serial_port/serial_port.h"
 #include "../../timer/timer.h"
 #include "../file_system.h"
 
@@ -8,6 +9,7 @@
 #include "../../keyboard/key_actions_handlers.h"
 #include "../../vga/vga.h"
 #include "../../base_utils/base_utils.h"
+#include "../../base_utils/int_to_char.h"
 #include "../../../kernel/kernel.h"
 
 struct File* current_file;
@@ -26,6 +28,8 @@ void init_content_input_handler() {
     file_index = 0;
     input_buffer_index = 0;
     cursor = 0;
+    global_pos[0] = 0;
+    global_pos[1] = 0;
     local_input_buffer[0] = '\0';
 }
 
@@ -51,6 +55,11 @@ void set_char(char character) {
 void new_line_in_buffer() {
     set_char('\n');
     cursor++;
+}
+
+void rem_last_char() {
+    local_input_buffer[cursor] = '\0';
+    input_buffer_index--;
 }
 
 void get_fb_pos() {
@@ -107,9 +116,11 @@ void move_internal_cursor(enum key action) {
     switch (action) {
         case KEY_KEYPAD_4:  //to the left
             if (cursor != 0) cursor--;
+            serial_print(to_char(cursor));
             break;
         case KEY_KEYPAD_6:  // to the right
             if (cursor != input_buffer_index) cursor++;
+            serial_print(to_char(cursor));
             break;
     }
     update_viewer_cursor();
@@ -129,15 +140,29 @@ void viewer_key_handler(struct keyboard_event event) {
             case KEY_ENTER:
                 new_line_in_buffer();
                 update_viewer_cursor();
+                serial_print(to_char(cursor));
             return;
+            case KEY_BACKSPACE:
+                cursor = input_buffer_index - 1;
+                rem_last_char();
+                // serial_print(local_input_buffer);
+                // serial_print("\n");
+                get_fb_pos();
+                framebuffer_set_char_at((struct FramebufferChar){
+                        ' ', DEF_BG, DEF_FG, '\0'},
+                        (FB_WIDTH * global_pos[0] + global_pos[1]) * 2
+                    );
+                update_viewer_cursor();
+                return;
         }
-        cursor++;
         framebuffer_set_char_at((struct FramebufferChar){
-            event.key_character, RED, BLACK, '\0'},
+            event.key_character, DEF_BG, DEF_FG, '\0'},
             (FB_WIDTH * global_pos[0] + global_pos[1]) * 2
         );
         set_char(event.key_character);
+        cursor++;
         update_viewer_cursor();
+        serial_print(to_char(cursor));
     }
 }
 

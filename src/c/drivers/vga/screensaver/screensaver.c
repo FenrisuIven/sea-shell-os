@@ -1,9 +1,11 @@
 #include "screensaver.h"
 
+#include "../../serial_port/serial_port.h"
 #include "../../bash/bash.h"
 #include "../../keyboard/keyboard.h"
 #include "../../timer/timer.h"
 #include "../../base_utils/base_utils.h"
+#include "../../base_utils/int_to_char.h"
 #include "../../base_utils/random.h"
 #include "../vga.h"
 
@@ -41,14 +43,18 @@ struct Char_To_Display screensaver_chars[FB_WIDTH];
 
 struct Char_To_Display init_char() {
     int col_idx = custom_rand(80);
-    for(int j = 0; j != MAX_CHARS; j++) {
-        if(col_idx == screensaver_chars[j].col_index) {
-            change_seed(j);
-            j = 0;
-            col_idx = custom_rand(80);
+    bool unique = false;
+    while (!unique) {
+        unique = true;
+        for (int j = 0; j < MAX_CHARS; j++) {
+            if (col_idx == screensaver_chars[j].col_index || col_idx == 80) {
+                change_seed(j);
+                col_idx = custom_rand(80);
+                unique = false;
+                break;
+            }
         }
     }
-    if(col_idx == 80) col_idx = 0;
 
     int move_offset = custom_rand(10);
     if (move_offset < 3) move_offset == 0 ? move_offset = 3 : move_offset == 1 ? move_offset == 5 : move_offset;
@@ -142,7 +148,6 @@ bool check_if_line_clear(int row_idx) {
 }
 
 int local_ticks = 0;
-int last_line_counter = 0;
 void screensaver_timer_handler() {
     if (scrolling) return;
 
@@ -152,16 +157,12 @@ void screensaver_timer_handler() {
 
         if (curr->current_tick == curr->move_offset) {
             draw_char(&(struct Char_To_Display){'\0',BLACK, BLACK, curr->row_index, curr->col_index});
-
             if(check_for_null_bellow(curr->row_index, curr->col_index) || curr->row_index == 24) {
-                if (curr->row_index == 24) last_line_counter++;
                 draw_char(curr);
                 set_not_movable(i);
 
                 while (!check_if_line_clear(24)) {
                     scroll_screensaver();
-                    line_counter = 0;
-                    last_line_counter = 0;
                 }
 
                 continue;

@@ -1,4 +1,4 @@
-#include "../bash.h"
+#include "../shell.h"
 #include "command_handlers.h"
 
 #include "../../base_utils/base_utils.h"
@@ -20,7 +20,7 @@ void execute_help() {
     while (i != COMMANDS_COUNT - (COMMANDS_SYSTEM_RESERVED * 1)) {
         out_message_command(i++, (struct Message) {
             .message = "",
-            DEF_BG,
+            SYSTEM_BG,
             SYSTEM_FG,
             true
         });
@@ -40,21 +40,21 @@ void execute_clear() {
 void execute_hello() {
     out_message((struct Message) {
             .message = " - Well hello to you as well!",
-            DEF_BG,
+            SYSTEM_BG,
             SYSTEM_FG,
             true
         });
 }
 
 void execute_dir() {
-    out_message((struct Message){"| root:", DEF_BG, SYSTEM_FG, true});
+    out_message((struct Message){"| root:", SYSTEM_BG, SYSTEM_FG, true});
     int i = 0;
     while (i != MAX_FILES * 1 && !compare_strings("", get_file_name_at(i))) {
         char message[MAX_FILE_NAME + 5] = "-- | ";
         concat_strings(message, get_file_name_at(i++));
         out_message((struct Message) {
             message,
-            DEF_BG,
+            SYSTEM_BG,
             SYSTEM_FG,
             true
         });
@@ -71,7 +71,7 @@ void execute_read(char* name) {
     struct File* target = get_file_at(target_index);
     out_message((struct Message) {
         target->content,
-        DEF_BG,
+        SYSTEM_BG,
         SYSTEM_FG,
         true
     });

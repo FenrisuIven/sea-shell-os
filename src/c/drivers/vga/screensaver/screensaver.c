@@ -1,7 +1,7 @@
 #include "screensaver.h"
 
 #include "../../serial_port/serial_port.h"
-#include "../../bash/bash.h"
+#include "../../shell/shell.h"
 #include "../../keyboard/keyboard.h"
 #include "../../timer/timer.h"
 #include "../../base_utils/base_utils.h"
@@ -168,7 +168,7 @@ void screensaver_timer_handler() {
                 continue;
             }
             curr->row_index += 1;
-            draw_char(curr);
+            draw_char(&(struct Char_To_Display){curr->character,BLACK, D_GRAY, curr->row_index, curr->col_index});
             curr->current_tick = 0;
         }
         if(count_present_chars < MAX_CHARS && local_ticks % MAX_CHARS * 5 == 0) {
@@ -182,7 +182,7 @@ void screensaver_timer_handler() {
 void screensaver_key_handler(struct keyboard_event event) {
     if (event.key && event.type == EVENT_KEY_PRESSED) {
         timer_set_handler(void_func);
-        init_bash();
+        init_shell();
     }
 }
 

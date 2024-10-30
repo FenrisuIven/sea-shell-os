@@ -14,7 +14,7 @@ SRC_C   := \
 	src/c/drivers/base_utils/base_utils.c \
 	src/c/drivers/base_utils/int_to_char.c \
 	src/c/drivers/vga/vga.c \
-	src/c/drivers/bash/bash.c \
+	src/c/drivers/shell/shell.c \
 	src/c/drivers/bash/command_handlers/command_handlers.c \
 	src/c/drivers/file_system/file_system.c \
 	src/c/drivers/keyboard/key_actions_handlers.c \

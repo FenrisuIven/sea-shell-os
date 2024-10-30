@@ -2,7 +2,7 @@
 
 #include "../base_utils/base_utils.h"
 #include "../vga/vga.h"
-#include "../bash/command_handlers/command_handlers.h"
+#include "../shell/command_handlers/command_handlers.h"
 
 struct File local_system[MAX_FILES];
 int current_file_count;

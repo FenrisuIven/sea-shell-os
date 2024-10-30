@@ -4,8 +4,8 @@
 
 extern bool acceptingFileContents;
 
-extern void key_Enter_Action(void handler());
-extern void key_Backspace_Action(void handler());
+extern void key_Enter_Action(void action());
+extern void key_Backspace_Action(void action());
 extern void key_Escape_Action(void action());
 
 #endif //KEYHANDLERS_H

@@ -6,16 +6,10 @@
 #define FB_WIDTH 80
 #define FB_HEIGHT 25
 
-struct Message {
-    char* message;
-    int bg;
-    int fg;
-    bool terminate;
-};
-
 enum COLORS {
     DEF_BG      = 0x3,  // cyan
     DEF_FG      = 0xf,  // white
+    SYSTEM_BG   = 0x3,  // cyan
     SYSTEM_FG   = 0xf,  // white
     SHELL_BG    = 0x9,  // l_blue
     SHELL_FG    = 0xf,  // white
@@ -44,7 +38,14 @@ struct FramebufferChar {
     char character;
     enum COLORS bg;
     enum COLORS fg;
-    u8 calculatedColorsByte;
+    u8 calculated_colors_byte;
+};
+
+struct Message {
+    char* message;
+    enum COLORS bg;
+    enum COLORS fg;
+    bool terminate;
 };
 
 extern int line_counter;

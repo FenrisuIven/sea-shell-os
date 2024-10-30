@@ -5,7 +5,7 @@
 #include "drivers/timer/timer.h"
 #include "drivers/serial_port/serial_port.h"
 #include "drivers/vga/vga.h"
-#include "drivers/bash/bash.h"
+#include "drivers/shell/shell.h"
 #include "drivers/vga/screensaver/screensaver.h"
 
 _Noreturn void halt_loop() {
@@ -32,7 +32,7 @@ void kernel_entry() {
     init_kernel();
     timer_set_handler(system_time_handler);
 
-    init_bash();
+    init_shell();
 
     halt_loop();
 }

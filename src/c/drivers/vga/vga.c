@@ -5,7 +5,7 @@
 #include "../../drivers/timer/timer.h"
 #include "../../drivers/serial_port/serial_port.h"
 #include "../../drivers/base_utils/base_utils.h"
-#include "../../drivers/bash/bash.h"
+#include "../../drivers/shell/shell.h"
 
 #define MAX_INPUT_SIZE 60
 
@@ -26,14 +26,14 @@ void update_framebuffer_pointer() {
     framebuffer = (char *)current_address;
 }
 void framebuffer_set_char_at(struct FramebufferChar FBChar, int pos) {
-    *framebuffer = FB_START;
-    framebuffer[pos] = FBChar.character;
-    framebuffer[pos + 1] = FBChar.calculatedColorsByte == '\0' ? (FBChar.bg << 4 | FBChar.fg) : FBChar.calculatedColorsByte;
+    char* fb_pointer = (char*)FB_START;
+    fb_pointer[pos] = FBChar.character;
+    fb_pointer[pos + 1] = FBChar.calculated_colors_byte == '\0' ? (FBChar.bg << 4 | FBChar.fg) : FBChar.calculated_colors_byte;
 }
 
 void framebuffer_set_char(struct FramebufferChar FBChar) {
     *framebuffer = FBChar.character;
-    *(framebuffer + 1) = FBChar.calculatedColorsByte == '\0' ? (FBChar.bg << 4 | FBChar.fg) : FBChar.calculatedColorsByte;
+    *(framebuffer + 1) = FBChar.calculated_colors_byte == '\0' ? (FBChar.bg << 4 | FBChar.fg) : FBChar.calculated_colors_byte;
 }
 
 void put_cursor(unsigned short pos) {
@@ -44,10 +44,10 @@ void put_cursor(unsigned short pos) {
 }
 
 void update_pointer_position(int increment) {
-    put_cursor(40 * line_counter + char_counter + increment);
+    put_cursor((FB_WIDTH / 2) * line_counter + char_counter + increment);
 }
 void set_cursor(int row, int col) {
-    put_cursor(80 * row + col);
+    put_cursor(FB_WIDTH * row + col);
 }
 
 void out_char (struct FramebufferChar FBChar) {
@@ -185,12 +185,13 @@ void clear_frame(bool print_shell_ver) {
     current_address = FB_START;
     update_framebuffer_pointer();
 
-    while (framebuffer != (char *)(current_address + (160 * 25))) {
-        framebuffer_set_char((struct FramebufferChar){' ', DEF_BG, DEF_FG, '\0'});
-        framebuffer += 2;
+    char* fb_pointer = (char*)current_address;
+    while (fb_pointer != (char *)(current_address + (160 * 25))) {
+        *fb_pointer = ' ';
+        *(fb_pointer + 1) = DEF_BG << 4 | DEF_FG;
+        fb_pointer += 2;
     }
 
-    update_framebuffer_pointer();
     if(print_shell_ver) print_shell_version();
 }
 

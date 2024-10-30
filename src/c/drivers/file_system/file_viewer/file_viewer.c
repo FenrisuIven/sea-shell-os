@@ -4,7 +4,7 @@
 #include "../../timer/timer.h"
 #include "../file_system.h"
 
-#include "../../bash/bash.h"
+#include "../../shell/shell.h"
 #include "../../keyboard/keyboard.h"
 #include "../../keyboard/key_actions_handlers.h"
 #include "../../vga/vga.h"
@@ -134,7 +134,7 @@ void viewer_key_handler(struct keyboard_event event) {
                 move_internal_cursor(event.key);
                 return;
             case KEY_ESC:
-                key_Escape_Action(init_bash);
+                key_Escape_Action(init_shell);
                 execute_accept_file_input(local_input_buffer);
             return;
             case KEY_ENTER:

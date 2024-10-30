@@ -56,6 +56,7 @@ extern void paint_frame(enum COLORS color);
 extern void framebuffer_set_char_at(struct FramebufferChar FBChar, int pos);
 extern void update_framebuffer_pointer();
 extern void update_pointer_position(int increment);
+extern void set_cursor(int row, int col);
 extern void out_char (struct FramebufferChar);
 extern void out_message (struct Message config);
 extern void out_message_command (int cmdIdx, struct Message config);

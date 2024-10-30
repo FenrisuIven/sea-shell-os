@@ -46,6 +46,9 @@ void put_cursor(unsigned short pos) {
 void update_pointer_position(int increment) {
     put_cursor(40 * line_counter + char_counter + increment);
 }
+void set_cursor(int row, int col) {
+    put_cursor(80 * row + col);
+}
 
 void out_char (struct FramebufferChar FBChar) {
     int increment = 1;

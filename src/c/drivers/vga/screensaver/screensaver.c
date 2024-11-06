@@ -34,7 +34,7 @@ struct Char_To_Display {
 };
 
 char get_char_by_col(int col_idx) {
-    return (col_idx + 1) + 64;
+    return col_idx + 65 ;
     // return 0xB0;
 }
 
@@ -83,23 +83,17 @@ void init_array_of_chars() {
     }
 }
 
+int calc_fb_index(int row_idx, int col_idx) {
+    return (FB_WIDTH * row_idx + col_idx) * 2;
+}
+
 void draw_char(struct Char_To_Display* current_char) {
     framebuffer_set_char_at((struct FramebufferChar){
         current_char->character,
         current_char->bg,
         current_char->fg,
         '\0'},
-        (FB_WIDTH * current_char->row_index + current_char->col_index) * 2);
-}
-
-void display_chars() {
-    for(int i = 0; i != MAX_CHARS; i++) {
-        draw_char(&screensaver_chars[i]);
-    }
-}
-
-int calc_fb_index(int row_idx, int col_idx) {
-    return (FB_WIDTH * row_idx + col_idx) * 2;
+        calc_fb_index(current_char->row_index, current_char->col_index));
 }
 
 bool scrolling = false;
@@ -153,7 +147,6 @@ void screensaver_timer_handler() {
 
     for (int i = 0; i != count_present_chars && i < MAX_CHARS; i++) {
         struct Char_To_Display* curr = &screensaver_chars[i];
-        if (!curr->movable) continue;
 
         if (curr->current_tick == curr->move_offset) {
             draw_char(&(struct Char_To_Display){'\0',BLACK, BLACK, curr->row_index, curr->col_index});
@@ -168,7 +161,7 @@ void screensaver_timer_handler() {
                 continue;
             }
             curr->row_index += 1;
-            draw_char(&(struct Char_To_Display){curr->character,BLACK, D_GRAY, curr->row_index, curr->col_index});
+            draw_char(curr);
             curr->current_tick = 0;
         }
         if(count_present_chars < MAX_CHARS && local_ticks % MAX_CHARS * 5 == 0) {

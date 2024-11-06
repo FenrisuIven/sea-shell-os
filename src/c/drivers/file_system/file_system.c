@@ -22,6 +22,7 @@ void set_content_for(int index, char* content) {
 }
 
 int create_file(char* name) {
+    if (get_index_by_name(name) != -1) return 1;
     local_system[current_file_count] = (struct File) {};
 
     trim_to_len(name, MAX_FILE_NAME - 1);
@@ -57,10 +58,9 @@ void delete_file(char* name) {
     for (int i = target_index; i != MAX_FILES - 1; i++) {
         local_system[i] = local_system[i + 1];
     }
-    local_system[MAX_FILES - 1] = (struct File){
+    local_system[current_file_count--] = (struct File){
         .name = "",
         .content = ""
     };
-    current_file_count--;
     execute_dir();
 }

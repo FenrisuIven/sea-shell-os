@@ -58,8 +58,7 @@ void new_line_in_buffer() {
 }
 
 void rem_last_char() {
-    local_input_buffer[cursor] = '\0';
-    input_buffer_index--;
+    local_input_buffer[--input_buffer_index] = '\0';
 }
 
 void get_fb_pos() {
@@ -114,11 +113,11 @@ void print_editor_status() {
 
 void move_internal_cursor(enum key action) {
     switch (action) {
-        case KEY_KEYPAD_4:  //to the left
+        case KEY_KEYPAD_4:
             if (cursor != 0) cursor--;
             serial_print(to_char(cursor));
             break;
-        case KEY_KEYPAD_6:  // to the right
+        case KEY_KEYPAD_6:
             if (cursor != input_buffer_index) cursor++;
             serial_print(to_char(cursor));
             break;
@@ -134,14 +133,14 @@ void viewer_key_handler(struct keyboard_event event) {
                 move_internal_cursor(event.key);
                 return;
             case KEY_ESC:
-                key_Escape_Action(init_shell);
                 execute_accept_file_input(local_input_buffer);
-            return;
+                key_Escape_Action(init_shell);
+                return;
             case KEY_ENTER:
                 new_line_in_buffer();
                 update_viewer_cursor();
                 serial_print(to_char(cursor));
-            return;
+                return;
             case KEY_BACKSPACE:
                 cursor = input_buffer_index - 1;
                 rem_last_char();
@@ -150,14 +149,14 @@ void viewer_key_handler(struct keyboard_event event) {
                 get_fb_pos();
                 framebuffer_set_char_at((struct FramebufferChar){
                         ' ', DEF_BG, DEF_FG, '\0'},
-                        (FB_WIDTH * global_pos[0] + global_pos[1]) * 2
+                        (FB_WIDTH * (global_pos[0] + 1) + global_pos[1]) * 2
                     );
                 update_viewer_cursor();
                 return;
         }
         framebuffer_set_char_at((struct FramebufferChar){
             event.key_character, DEF_BG, DEF_FG, '\0'},
-            (FB_WIDTH * global_pos[0] + global_pos[1]) * 2
+            (FB_WIDTH * (global_pos[0] + 1) + global_pos[1]) * 2
         );
         set_char(event.key_character);
         cursor++;
@@ -168,8 +167,8 @@ void viewer_key_handler(struct keyboard_event event) {
 
 int init_viewer(char* name) {
     init_content_input_handler();
-    timer_set_handler(void_func);
     if(execute_accept_file_input(name) == 1) return 1;
+    timer_set_handler(void_func);
 
     keyboard_set_handler(viewer_key_handler);
     print_editor_status();
